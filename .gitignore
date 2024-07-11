@@ -118,3 +118,6 @@ dist
 .pnp.*
 
 # End of https://mrkandreev.name/snippets/gitignore-generator/#Node
+
+# JS Tutorial File : Complete Steps from A to Z to learn Javascript Backend 
+JsBackendTutorial.txt
