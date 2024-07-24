@@ -23,7 +23,7 @@ app.use(cookieParser());
 import userRouter from "./routes/user.routes.js";
 import comment from "./routes/comment.routes.js";
 import dashboard from "./routes/dashboard.routes.js";
-import healthcheck from "./routes/healthcheck.routes.js";
+import healthCheck from "./routes/healthCheck.routes.js";
 import like from "./routes/like.routes.js";
 import playlist from "./routes/playlist.routes.js";
 import subscription from "./routes/subscription.routes.js";
@@ -32,7 +32,7 @@ import video from "./routes/video.routes.js";
 
 // Routes declaration
 app.use("/api/v1/users", userRouter);
-app.use("/api/v1/healthcheck", healthcheck);
+app.use("/api/v1/healthCheck", healthCheck);
 app.use("/api/v1/comment", comment);
 app.use("/api/v1/dashboard", dashboard);
 app.use("/api/v1/like", like);
