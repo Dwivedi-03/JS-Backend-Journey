@@ -2,7 +2,10 @@ import jwt from "jsonwebtoken";
 import { asyncHandler } from "../utils/AsyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import { User } from "../models/user.model.js";
-import { uploadOnCloudinary } from "../utils/cloudinary.js";
+import {
+  deleteFromCloudinary,
+  uploadOnCloudinary,
+} from "../utils/cloudinary.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import mongoose from "mongoose";
 
@@ -148,8 +151,8 @@ const logoutUser = asyncHandler(async (req, res) => {
       },
       // $unset: {
       //   refreshToken: 1,
-      // }, 
-      // this removes the field from document 
+      // },
+      // this removes the field from document
     },
     {
       new: true,
@@ -267,6 +270,17 @@ const updateUserAvatar = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Avatar file is missing!");
   }
 
+  const userImage = await User.findById({
+    _id: req.user?._id,
+  });
+  const userAvatarFilePath = userImage["avatar"];
+
+  const response = await deleteFromCloudinary(userAvatarFilePath);
+
+  if (!response) {
+    throw new ApiError(400, "Error while deleting cover image from cloudinary");
+  }
+
   const avatar = await uploadOnCloudinary(avatarLocalPath);
 
   if (!avatar.url) {
@@ -295,6 +309,17 @@ const updateUserCoverImage = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Cover Image file is missing!");
   }
 
+  const userImage = await User.findById({
+    _id: req.user?._id,
+  });
+  const userCoverImageFilePath = userImage["coverImage"];
+
+  const response = await deleteFromCloudinary(userCoverImageFilePath);
+
+  if (!response) {
+    throw new ApiError(400, "Error while deleting cover image from cloudinary");
+  }
+
   const coverImage = await uploadOnCloudinary(coverImageLocalPath);
 
   if (!coverImage.url) {
@@ -315,8 +340,6 @@ const updateUserCoverImage = asyncHandler(async (req, res) => {
     .status(200)
     .json(new ApiResponse(200, user, "Cover Image updated successfully!"));
 });
-
-// todo : delete old images from cloudinary | assignment
 
 const getUserChannelProfile = asyncHandler(async (req, res) => {
   const { username } = req.params;
@@ -376,8 +399,6 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
       },
     },
   ]);
-  console.log("Aggregate pipelines : channel");
-  console.log(channel);
 
   if (!channel?.length) {
     throw new ApiError(404, "Channel does not exists!");
